@@ -1,0 +1,97 @@
+*{box-sizing:border-box}
+:root{color-scheme:dark;--paper:#eaeade;--dim:#adad9e;--edge:#38382f;--acid:#e3fa64;background:#151611;color:var(--paper);font-family:Arial,sans-serif}
+body{margin:0;min-width:290px}
+button,select,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--accent,var(--acid));outline-offset:4px}
+button:disabled{opacity:.55;cursor:default}
+.shell{max-width:1360px;margin:auto;padding:0 clamp(18px,5vw,72px)}
+header,footer{font:12px/1.2 monospace;letter-spacing:.1em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:22px 0;border-bottom:1px solid var(--edge)}
+footer{border-bottom:0;border-top:1px solid var(--edge);color:var(--dim);margin-top:38px}
+.brand{display:inline-flex;align-items:center;gap:9px;font-weight:bold;color:var(--acid)}
+.rabbit{width:22px;height:22px;vertical-align:middle;flex:none}
+.hero{padding:clamp(38px,7vw,95px) 0 35px}
+.hero h1,.instrument h1{font-size:clamp(40px,8.9vw,128px);letter-spacing:-.085em;line-height:.86;margin:0;text-transform:uppercase;font-weight:900}
+.hero h1 span{color:var(--acid)}
+.hero p{color:var(--dim);margin:23px 0 0;font-size:clamp(15px,2vw,19px)}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card{background:var(--panel);color:var(--ink);border:0;text-align:left;padding:20px;min-width:0;display:flex;flex-direction:column;transition:transform .18s}
+.card:hover{transform:translateY(-5px)}
+.card-art{width:100%;height:clamp(115px,16vw,220px);margin-bottom:17px}
+.card .line{display:flex;justify-content:space-between;align-items:center;gap:5px}
+.card strong{font-size:clamp(18px,3.25vw,48px);letter-spacing:-.07em}
+.card small{font:12px/1.35 monospace;margin-top:6px}
+.mutiny{--panel:#ff6248;--ink:#22150f;--accent:#ff735a}
+.parasite{--panel:#d5ed66;--ink:#202610;--accent:#d5ed66}
+.ecosystem{--panel:#a6a0f2;--ink:#211a39;--accent:#bcb3ff}
+.back,.plain{background:none;border:1px solid var(--edge);color:inherit;padding:9px 12px;text-decoration:none}
+.instrument{padding-top:35px}
+.instrument h1{color:var(--accent)}
+.instrument .intro{color:var(--dim);margin:14px 0 22px}
+.instrument .surface{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(240px,1fr);gap:16px}
+.screen{min-height:270px;padding:20px;position:relative;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.screen .card-art{height:170px;margin:0}
+.screen b{display:block;font-size:clamp(25px,4vw,48px);letter-spacing:-.06em}
+.screen small,.status{font:13px/1.45 monospace}
+.mutiny .screen{background:#381f1a;color:#ffac9c;border-left:6px solid var(--accent)}
+.parasite .surface{grid-template-columns:minmax(240px,1fr) minmax(0,1.4fr)}
+.parasite .screen{grid-column:2;grid-row:1;background:#18220c;border:1px solid #596638;color:var(--accent);font-family:monospace}
+.parasite .screen b{text-transform:uppercase;letter-spacing:.05em}
+.parasite .controlbox{grid-column:1;grid-row:1;border-color:#596638}
+.controlbox{border:1px solid var(--edge);padding:18px;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.control{display:grid;grid-template-columns:1fr auto;gap:5px;align-items:center;font:13px/1.25 monospace}
+.control span{display:flex;align-items:center;gap:7px}
+.control output{color:var(--accent)}
+.control input{grid-column:1/-1;width:100%;margin:0;accent-color:var(--accent);height:24px}
+.control.chaos{background:color-mix(in srgb,var(--accent) 13%,transparent);padding:10px}
+.actions,.midi{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-top:15px}
+.actions button,.midi button{border:1px solid var(--edge);padding:12px 16px;background:none;color:var(--paper);font:700 13px monospace}
+.actions .play{background:var(--accent);color:#171811;border-color:var(--accent)}
+.midi{font:13px/1.5 monospace}
+.midi select,.midi input[type=number]{padding:6px;color:inherit;background:#23251b;border:1px solid var(--edge);max-width:100%}
+.midi input[type=number]{width:68px}
+.status{min-height:1.5em;color:var(--dim)}
+@media(max-width:650px){
+.cards{grid-template-columns:1fr}
+.card-art{height:132px}
+.card strong{font-size:30px}
+.instrument .surface{grid-template-columns:1fr}
+.parasite .screen,.parasite .controlbox{grid-column:auto;grid-row:auto}
+.screen{min-height:220px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ECOSYSTEM: Circle of Life */
+.life-shell{--life-border:#413852}
+.life-shell header{border-color:var(--life-border)}
+.life-observer{display:inline-flex;gap:8px;align-items:center;color:#c7b4eb}
+.life-main{padding:36px 0 24px}
+.life-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.life-heading p{color:#c9b6e8;letter-spacing:.14em;font:13px monospace;text-transform:uppercase;margin:0 0 12px}
+.life-heading h1{font-size:clamp(36px,8vw,108px);line-height:.91;letter-spacing:-.085em;margin:0;color:#eee4ff}
+.life-actions{display:flex;gap:8px;flex-wrap:wrap}
+.life-actions button{font:700 13px monospace;text-transform:uppercase;padding:12px 16px;border:1px solid #867299;background:#201929;color:#e4d6ff}
+.life-actions #play{background:#d6c6fa;color:#21172a;border-color:#d6c6fa}
+.life-world{position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 55%,#342744 0%,#201829 50%,#17131f 100%);border:1px solid var(--life-border);border-radius:24px;max-width:1200px;margin:0 auto}
+.life-readout{position:absolute;top:16px;left:18px;right:18px;z-index:1;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;color:#dbcbf3}
+.life-readout strong{text-transform:uppercase;font:700 13px monospace;letter-spacing:.1em}
+.life-readout span{font:12px monospace;color:#c3b5d1}
+.life-map{display:block;width:100%;max-height:65vh;min-height:260px}
+.life-rings{fill:none;stroke:#827293;stroke-opacity:.39;stroke-dasharray:2 7}
+.life-link{fill:none;stroke:#d7cafa;stroke-width:2;stroke-dasharray:4 8;opacity:.8}
+.life-link[data-type=birth]{stroke:#99d3ac;stroke-width:3;stroke-dasharray:none}
+.life-link[data-type=competition]{stroke:#f4a58c}
+.life-orbit{fill:none;stroke:var(--organism);stroke-opacity:.44;stroke-dasharray:2 6;stroke-width:1.6}
+.life-body{color:var(--organism);opacity:calc(.16 + var(--health,.5) * .84);transform:scale(var(--growth,1));transition:transform .16s ease-out,opacity .45s}
+.life-body path{fill:currentColor;fill-opacity:.42;stroke:currentColor;stroke-width:1.5}
+.life-body ellipse{fill:none;stroke:currentColor;stroke-width:1.3}
+.life-body circle{fill:currentColor}
+.life-node[data-state=empty] .life-body,.life-world[data-phase=unborn] .life-body{opacity:0}
+.life-node[data-state=Dormant] .life-body{opacity:.18}
+.life-world[data-phase=ending] .life-orbit{stroke-opacity:.2}
+.life-census{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--life-border);border-top:1px solid var(--life-border)}
+.life-card{display:flex;flex-direction:column;gap:6px;padding:13px 15px;background:#1d1726;font:13px monospace}
+.life-card span{color:var(--organism)}
+.life-card small,.life-message{color:#c6b7d2;font:12px/1.4 monospace}
+.life-message{min-height:1.4em}
+@media(max-width:550px){.life-census{grid-template-columns:repeat(2,minmax(0,1fr))}.life-main{padding-top:26px}.life-card{padding:9px 12px}.life-map{margin-top:22px;min-height:180px}.life-readout{gap:5px 10px}}

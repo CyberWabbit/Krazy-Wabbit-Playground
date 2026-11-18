@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Krazy Wabbit Playground</title>
+<style>*{box-sizing:border-box}
+:root{color-scheme:dark;--paper:#eaeade;--dim:#adad9e;--edge:#38382f;--acid:#e3fa64;background:#151611;color:var(--paper);font-family:Arial,sans-serif}
+body{margin:0;min-width:290px}
+button,select,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--accent,var(--acid));outline-offset:4px}
+button:disabled{opacity:.55;cursor:default}
+.shell{max-width:1360px;margin:auto;padding:0 clamp(18px,5vw,72px)}
+header,footer{font:12px/1.2 monospace;letter-spacing:.1em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:22px 0;border-bottom:1px solid var(--edge)}
+footer{border-bottom:0;border-top:1px solid var(--edge);color:var(--dim);margin-top:38px}
+.brand{display:inline-flex;align-items:center;gap:9px;font-weight:bold;color:var(--acid)}
+.rabbit{width:22px;height:22px;vertical-align:middle;flex:none}
+.hero{padding:clamp(38px,7vw,95px) 0 35px}
+.hero h1,.instrument h1{font-size:clamp(40px,8.9vw,128px);letter-spacing:-.085em;line-height:.86;margin:0;text-transform:uppercase;font-weight:900}
+.hero h1 span{color:var(--acid)}
+.hero p{color:var(--dim);margin:23px 0 0;font-size:clamp(15px,2vw,19px)}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card{background:var(--panel);color:var(--ink);border:0;text-align:left;padding:20px;min-width:0;display:flex;flex-direction:column;transition:transform .18s}
+.card:hover{transform:translateY(-5px)}
+.card-art{width:100%;height:clamp(115px,16vw,220px);margin-bottom:17px}
+.card .line{display:flex;justify-content:space-between;align-items:center;gap:5px}
+.card strong{font-size:clamp(18px,3.25vw,48px);letter-spacing:-.07em}
+.card small{font:12px/1.35 monospace;margin-top:6px}
+.mutiny{--panel:#ff6248;--ink:#22150f;--accent:#ff735a}
+.parasite{--panel:#d5ed66;--ink:#202610;--accent:#d5ed66}
+.ecosystem{--panel:#a6a0f2;--ink:#211a39;--accent:#bcb3ff}
+.back,.plain{background:none;border:1px solid var(--edge);color:inherit;padding:9px 12px;text-decoration:none}
+.instrument{padding-top:35px}
+.instrument h1{color:var(--accent)}
+.instrument .intro{color:var(--dim);margin:14px 0 22px}
+.instrument .surface{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(240px,1fr);gap:16px}
+.screen{min-height:270px;padding:20px;position:relative;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.screen .card-art{height:170px;margin:0}
+.screen b{display:block;font-size:clamp(25px,4vw,48px);letter-spacing:-.06em}
+.screen small,.status{font:13px/1.45 monospace}
+.mutiny .screen{background:#381f1a;color:#ffac9c;border-left:6px solid var(--accent)}
+.parasite .surface{grid-template-columns:minmax(240px,1fr) minmax(0,1.4fr)}
+.parasite .screen{grid-column:2;grid-row:1;background:#18220c;border:1px solid #596638;color:var(--accent);font-family:monospace}
+.parasite .screen b{text-transform:uppercase;letter-spacing:.05em}
+.parasite .controlbox{grid-column:1;grid-row:1;border-color:#596638}
+.controlbox{border:1px solid var(--edge);padding:18px;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.control{display:grid;grid-template-columns:1fr auto;gap:5px;align-items:center;font:13px/1.25 monospace}
+.control span{display:flex;align-items:center;gap:7px}
+.control output{color:var(--accent)}
+.control input{grid-column:1/-1;width:100%;margin:0;accent-color:var(--accent);height:24px}
+.control.chaos{background:color-mix(in srgb,var(--accent) 13%,transparent);padding:10px}
+.actions,.midi{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-top:15px}
+.actions button,.midi button{border:1px solid var(--edge);padding:12px 16px;background:none;color:var(--paper);font:700 13px monospace}
+.actions .play{background:var(--accent);color:#171811;border-color:var(--accent)}
+.midi{font:13px/1.5 monospace}
+.midi select,.midi input[type=number]{padding:6px;color:inherit;background:#23251b;border:1px solid var(--edge);max-width:100%}
+.midi input[type=number]{width:68px}
+.status{min-height:1.5em;color:var(--dim)}
+@media(max-width:650px){
+.cards{grid-template-columns:1fr}
+.card-art{height:132px}
+.card strong{font-size:30px}
+.instrument .surface{grid-template-columns:1fr}
+.parasite .screen,.parasite .controlbox{grid-column:auto;grid-row:auto}
+.screen{min-height:220px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ECOSYSTEM: Circle of Life */
+.life-shell{--life-border:#413852}
+.life-shell header{border-color:var(--life-border)}
+.life-observer{display:inline-flex;gap:8px;align-items:center;color:#c7b4eb}
+.life-main{padding:36px 0 24px}
+.life-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.life-heading p{color:#c9b6e8;letter-spacing:.14em;font:13px monospace;text-transform:uppercase;margin:0 0 12px}
+.life-heading h1{font-size:clamp(36px,8vw,108px);line-height:.91;letter-spacing:-.085em;margin:0;color:#eee4ff}
+.life-actions{display:flex;gap:8px;flex-wrap:wrap}
+.life-actions button{font:700 13px monospace;text-transform:uppercase;padding:12px 16px;border:1px solid #867299;background:#201929;color:#e4d6ff}
+.life-actions #play{background:#d6c6fa;color:#21172a;border-color:#d6c6fa}
+.life-world{position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 55%,#342744 0%,#201829 50%,#17131f 100%);border:1px solid var(--life-border);border-radius:24px;max-width:1200px;margin:0 auto}
+.life-readout{position:absolute;top:16px;left:18px;right:18px;z-index:1;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;color:#dbcbf3}
+.life-readout strong{text-transform:uppercase;font:700 13px monospace;letter-spacing:.1em}
+.life-readout span{font:12px monospace;color:#c3b5d1}
+.life-map{display:block;width:100%;max-height:65vh;min-height:260px}
+.life-rings{fill:none;stroke:#827293;stroke-opacity:.39;stroke-dasharray:2 7}
+.life-link{fill:none;stroke:#d7cafa;stroke-width:2;stroke-dasharray:4 8;opacity:.8}
+.life-link[data-type=birth]{stroke:#99d3ac;stroke-width:3;stroke-dasharray:none}
+.life-link[data-type=competition]{stroke:#f4a58c}
+.life-orbit{fill:none;stroke:var(--organism);stroke-opacity:.44;stroke-dasharray:2 6;stroke-width:1.6}
+.life-body{color:var(--organism);opacity:calc(.16 + var(--health,.5) * .84);transform:scale(var(--growth,1));transition:transform .16s ease-out,opacity .45s}
+.life-body path{fill:currentColor;fill-opacity:.42;stroke:currentColor;stroke-width:1.5}
+.life-body ellipse{fill:none;stroke:currentColor;stroke-width:1.3}
+.life-body circle{fill:currentColor}
+.life-node[data-state=empty] .life-body,.life-world[data-phase=unborn] .life-body{opacity:0}
+.life-node[data-state=Dormant] .life-body{opacity:.18}
+.life-world[data-phase=ending] .life-orbit{stroke-opacity:.2}
+.life-census{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--life-border);border-top:1px solid var(--life-border)}
+.life-card{display:flex;flex-direction:column;gap:6px;padding:13px 15px;background:#1d1726;font:13px monospace}
+.life-card span{color:var(--organism)}
+.life-card small,.life-message{color:#c6b7d2;font:12px/1.4 monospace}
+.life-message{min-height:1.4em}
+@media(max-width:550px){.life-census{grid-template-columns:repeat(2,minmax(0,1fr))}.life-main{padding-top:26px}.life-card{padding:9px 12px}.life-map{margin-top:22px;min-height:180px}.life-readout{gap:5px 10px}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>const clamp = (x, lo=0, hi=1) => Math.max(lo, Math.min(hi,x));
+const pick = (r, xs) => xs[Math.floor(r()*xs.length)];
+const scale = [0,2,3,5,7,8,10];
+const pitch = d => scale[((d%7)+7)%7]+12*Math.floor(d/7);
+function engine(kind, seed=Date.now()) {
+  let z=seed|0;
+  const r=()=>{ z=(Math.imul(z,1664525)+1013904223)|0; return (z>>>0)/4294967296; };
+  const motif=()=>Array.from({length:4},(_,i)=>i===0?0:pick(r,[0,1,2,3,4,5,7]));
+  let phrase=motif(), origin=[...phrase], mode='Drive', age=0, root=0, relation='';
+  return {
+    step(n,p){
+      const s=n%16,b=Math.floor(n/16), out=[];
+      const add=(voice,note=48,vel=.65,len=.22,offset=0)=>out.push({voice,note,vel,len,offset});
+      if(kind==='mutiny'){
+        if(s===0&&b>0){
+          age++;
+          if(mode==='Break'){mode='Rebuild';age=0;phrase=[...origin];}
+          else if(mode==='Rebuild'){mode='Drive';age=0;}
+          else if(age>=3 && (age>=12 || r()<.11+p.chaos*.48-p.stability*.12)){mode='Break';age=0;}
+          if(mode==='Drive'&&r()<p.mutation*(.45+.5*p.chaos)) phrase[Math.floor(r()*4)]=pick(r,[0,2,3,4,5,7]);
+          if(mode==='Rebuild'&&r()<p.rebirth){root=pick(r,[0,-2,-5,3]);origin=motif();}
+          if(b%4===0&&mode==='Drive'&&r()<p.stability) phrase=[...origin];
+        }
+        if(s%4===0&&(mode!=='Break'||s===0))add('kick',36,.7+p.aggression*.23);
+        if((s===4||s===12)&&mode==='Drive')add('clap',44,.45+p.aggression*.35);
+        if((s%4===2||s%2===1&&r()<p.aggression*.55)&&mode!=='Break')add('hat',72,.28+p.aggression*.34,.07,.012*(s%2));
+        if([0,3,6,10,12,15].includes(s)&&mode!=='Break'&&(mode!=='Rebuild'||s<9)){
+          add('bass',36+root+pitch(phrase[Math.floor(s/4)]%5),.73,.14+p.stability*.12);
+        }
+        if((s===2||s===9||s===14)&& (mode==='Break'||b%4>=2))add('glass',60+root+pitch(phrase[Math.floor(s/4)]),.52,mode==='Break'?.68:.24);
+        if(s>=13&&b%4===3&&r()<.45+p.chaos*.5)add('hat',70,.58,.06);
+        relation=mode==='Break'?'Pulse stripped back':mode==='Rebuild'?'Original motif resurfaces':'Motif in circulation';
+      }else if(kind==='parasite'){
+        if(s===0){
+          if(b%8===0){phrase=[...origin];mode='Latch';}
+          else if(b%8===7){mode='Recover';phrase=[...origin];}
+          else if(r()<.17+p.chaos*.7){
+            mode=pick(r,['Splice','Burst','Slip']);
+            if(mode==='Splice')phrase=[...phrase.slice(1),pick(r,[0,2,4,6,7])];
+          }
+        }
+        const shift=mode==='Slip'&&s<12?1:0;
+        if([0,3,6,8,11,14].includes(s-shift)||(mode==='Burst'&&s%2===1&&r()<p.chaos*p.density)){
+          if(s===0||r()<.45+p.density*.55){
+            const idx=Math.floor((s-shift)/4)%4;
+            const note=48+pitch(phrase[idx])+((mode==='Splice'&&s>=12)?12:0);
+            add('wire',note,s%4===0?.8:.46,.045+p.gate*.33,(s%2)*p.swing*.055);
+            if(mode==='Burst'&&p.chaos>.72&&s%4===3)add('wire',note+12,.43,.055,.055);
+          }
+        }
+        relation=mode==='Recover'?'Returning to source phrase':'Phrase '+phrase.map(x=>x+1).join(' · ');
+      }
+      return out;
+    },
+    view(){return {mode,relation};}
+  };
+}
+
+const LIFE_ROLES = ['Pulse','Bass','Melody','Texture'];
+const LIFE_VOICES = ['kick','bass','glass','moss'];
+const LIFE_RHYTHMS = [
+  [[0,4,8,12],[0,6,8,14],[0,3,8,12]],
+  [[0,5,10,14],[2,6,12],[0,7,11,15]],
+  [[2,6,11,14],[3,7,12],[1,9,13]],
+  [[0,8],[4,12],[2,10,15]]
+];
+const LIFE_END_STEPS = 64;
+const LIFE_VOICE_LIMIT = 7;
+const LIFE_MODE = [0,2,3,5,7,9,10];
+
+function birthSeed(){
+  return [...crypto.getRandomValues(new Uint32Array(4))].map(n=>n.toString(16).padStart(8,'0')).join('');
+}
+function newEcosystem(seed=birthSeed()){
+  const words=typeof seed==='number'?[seed,seed^0x6679,seed^0x8923,seed^0x1ade]:seed.match(/.{8}/g).map(w=>parseInt(w,16));
+  let [a,b,c,d]=words.map(word=>word|0);
+  let serial=0;
+  function random(){
+    const value=(a+b+d)|0;
+    d=(d+1)|0;
+    a=b^(b>>>9);
+    b=(c+(c<<3))|0;
+    c=(((c<<21)|(c>>>11))+value)|0;
+    return (value>>>0)/4294967296;
+  }
+  for(let i=0;i<12;i++)random();
+  const choose=values=>pick(random,values);
+  const initialRoot=Math.floor(random()*12);
+  const tempo=94+Math.floor(random()*34);
+  const seasonBias=random()*.28-.14;
+  let resource=.52+random()*.35, weather='Flourishing', root=initialRoot;
+  let nextShift=3+Math.floor(random()*5), twilight=null, relation=null;
+  let phraseAnchor=0;
+  const slots=Array(4).fill(null), voices=[];
+  const remembered=Array(4).fill(null);
+  const affinities=Array.from({length:4},(_,i)=>Array.from({length:4},(_,j)=>i===j?0:random()*.6-.3));
+
+  function organism(role,parent=null){
+    const motif=parent?[...parent.motif]:[0,choose([1,2,4]),choose([2,4,5,7]),choose([0,2,4,6])];
+    if(parent)motif[1+Math.floor(random()*3)]=choose([0,1,2,4,5,7]);
+    return {
+      id:++serial,role,parent:parent?.id??null,generation:(parent?.generation??0)+1,
+      motif, rhythm:LIFE_RHYTHMS[role].indexOf(choose(LIFE_RHYTHMS[role])),
+      tint:parent?clamp(parent.tint+(random()-.5)*.37):random(),
+      offset:role===0?0:Math.floor(random()*3),
+      energy:.48+random()*.3,age:0, lifespan:13+Math.floor(random()*22),
+      sleep:0, state:'Young', lastBeat:-1
+    };
+  }
+  for(let role=0;role<4;role++)slots[role]=organism(role);
+
+  function evolve(bar){
+    relation=null;
+    const drift=Math.sin((bar+seasonBias*12)*.39)*.061+Math.sin(bar*.116)*.027+(random()-.5)*.085;
+    resource=clamp(resource+drift+(0.59+seasonBias-resource)*.09,.19,.94);
+    weather=resource<.44?'Lean season':resource>.71?'Flourishing':'Quiet growth';
+    if(bar>=nextShift){
+      root=initialRoot+choose([0,0,5,7,-2]);
+      nextShift=bar+2+Math.floor(random()*7);
+    }
+    const living=slots.filter(Boolean);
+    const leader=living.reduce((a,b)=>!a||b.energy>a.energy?b:a,null);
+    phraseAnchor=leader?.motif[2]??0;
+    const vacancies=[];
+    for(let i=0;i<slots.length;i++){
+      const c=slots[i];
+      if(!c){vacancies.push(i);continue;}
+      c.age++;
+      c.energy=clamp(c.energy+(resource-.54)*.21+(random()-.5)*.09
+        -(c.age/c.lifespan)*.042+(c.sleep?.11:.012));
+      if(c.age>=c.lifespan||(c.energy<.13&&c.age>6)){
+        remembered[i]=c;slots[i]=null;
+        relation={type:'death',from:i,to:i,text:LIFE_ROLES[i]+' has died'};
+        continue;
+      }
+      if(c.sleep){
+        c.sleep--;
+        if(!c.sleep){c.energy=Math.max(.43,c.energy);c.state='Returning';}
+        continue;
+      }
+      if(c.energy<.27){c.sleep=2;relation={type:'dormant',from:i,to:i,text:LIFE_ROLES[i]+' goes dormant'};continue;}
+      c.state=c.age<4?'Growing':c.age/c.lifespan>.72?'Aging':'Mature';
+      if(!leader||c===leader||leader.sleep)continue;
+      const affinity=affinities[i][leader.role];
+      const probability=random();
+      if(probability<.10+resource*.14+affinity*.16){
+        c.motif[2]=leader.motif[2];
+        c.motif[3]=leader.motif[3];
+        c.offset=leader.offset;
+        c.tint=(c.tint*2+leader.tint)/3;
+        relation={type:'imitation',from:leader.role,to:i,text:LIFE_ROLES[i]+' echoes '+LIFE_ROLES[leader.role]};
+      }else if(resource<.5&&probability>.63){
+        c.offset=(c.offset+1)%3;
+        c.energy=Math.max(.18,c.energy-.041);
+        relation={type:'competition',from:leader.role,to:i,text:LIFE_ROLES[i]+' yields space to '+LIFE_ROLES[leader.role]};
+      }
+      if(random()<.10+(1-resource)*.15){
+        c.motif[1+Math.floor(random()*3)]=choose([0,2,3,4,5,7]);
+        c.rhythm=(c.rhythm+1)%3;
+        c.tint=clamp(c.tint+(random()-.5)*.3);
+      }
+    }
+    for(const i of vacancies){
+      const parent=leader&&slots.includes(leader)?leader:remembered[i];
+      if(!parent||!leader||random()<.48+resource*.36){
+        slots[i]=organism(i,parent);
+        remembered[i]=null;
+        relation={type:'birth',from:parent?.role??i,to:i,text:LIFE_ROLES[i]+' born'+(parent?' · generation '+slots[i].generation:'')};
+      }
+    }
+  }
+
+  const noteOffset=d=>LIFE_MODE[d%7]+12*Math.floor(d/7);
+  const stepSeconds=60/tempo/4;
+  function step(n){
+    if(n>0&&n%16===0&&twilight===null)evolve(n/16);
+    const elapsed=twilight===null?0:n-twilight;
+    const life=clamp(1-elapsed/LIFE_END_STEPS);
+    if(life===0)return [];
+    const now=n*stepSeconds;
+    while(voices.length&&voices[0]<=now)voices.shift();
+    const capacity=twilight===null?(resource<.39?1:resource<.66?2:3):Math.ceil(life*3);
+    const ordered=slots.filter(c=>c&&!c.sleep).sort((a,b)=>b.energy-a.energy);
+    const events=[];
+    if(twilight!==null&&elapsed>=44){
+      // Let the strongest surviving voice articulate the home pitch twice, then leave its tail.
+      const final=ordered.find(c=>c.role!==0)??ordered[0];
+      if(final&&voices.length<LIFE_VOICE_LIMIT&&(elapsed===44||elapsed===51)){
+        final.lastBeat=n;
+        voices.push(now+.628);
+        voices.sort((a,b)=>a-b);
+        events.push({voice:'glass',note:60+root,vel:life*.72,len:.62,offset:0,tone:final.tint});
+      }
+      return events;
+    }
+    for(const c of ordered){
+      if(events.length>=capacity||voices.length>=LIFE_VOICE_LIMIT)break;
+      const beat=(n+16-c.offset)%16;
+      const ending=twilight!==null;
+      if(ending && life<.62&&c.role===0)continue;
+      const rhythm=LIFE_RHYTHMS[c.role][c.rhythm];
+      if(!rhythm.includes(beat)&&!(n===0&&c.role===0))continue;
+      const strength=ending?life:(.56+resource*.32+c.energy*.15);
+      if(n!==0&&random()>strength)continue;
+      const degree=c.role===1&&beat%4===0?0:beat===8&&resource>.64?phraseAnchor:c.motif[Math.floor(beat/4)];
+      const note=[36,36,60,48][c.role]+root+noteOffset(degree);
+      const length=[.25,.16+c.tint*.22,.21+c.tint*.32,.46+c.tint*.31][c.role];
+      const gain=(.32+c.energy*.38)*(ending?life**.65:1);
+      const offset=c.role===0?0:c.offset*.009+c.tint*.014*(beat%2);
+      events.push({voice:LIFE_VOICES[c.role],note,vel:gain,len:length,offset,tone:c.tint});
+      voices.push(now+offset+length+.008);
+      voices.sort((a,b)=>a-b);
+      c.lastBeat=n;
+    }
+    return events;
+  }
+  return {
+    seed,tempo,step,
+    end(n){if(twilight===null)twilight=n;},
+    done(n){return twilight!==null&&n>=twilight+LIFE_END_STEPS;},
+    view(n){
+      const life=twilight===null?1:clamp(1-(n-twilight)/LIFE_END_STEPS);
+      return {
+        mode:twilight===null?weather:'Father Time',
+        relation:twilight===null?relation:null,
+        root,
+        life,
+        voices:voices.length,
+        creatures:slots.map(c=>c&&{
+          ...c,motif:[...c.motif],
+          energy:twilight===null?c.energy:c.energy*life,
+          state:twilight===null?(c.sleep?'Dormant':c.state):life<.28?'Fading':'Aging',
+          sounding:c.lastBeat===n
+        })
+      };
+    }
+  };
+}
+
+class Midi {
+  constructor(){this.active=new Map();this.port=null;this.channel=0;}
+  route(port,channel){
+    if(port===this.port&&channel===this.channel)return;
+    this.panic();this.port=port;this.channel=channel;
+  }
+  send(packet,at){
+    try {this.port?.send(packet,at);return !!this.port;} catch {return false;}
+  }
+  note(note,vel,at,duration){
+    const on=0x90|this.channel,off=0x80|this.channel;
+    const end=at+duration;
+    const existing=this.active.get(note);
+    if(existing!==undefined&&existing>at)return;
+    if(this.send([on,note,Math.round(clamp(vel)*126)+1],at)){
+      this.active.set(note,end);
+      this.send([off,note,0],end);
+    }
+  }
+  prune(at){for(const [note,end] of this.active)if(end<at)this.active.delete(note);}
+  cc(cc,value,at){this.send([0xb0|this.channel,cc,value],at);}
+  panic(){
+    if(this.port){
+      try{this.port.clear();}catch{}
+      for(const note of this.active.keys())this.send([0x80|this.channel,note,0]);
+      this.cc(64,0);this.cc(123,0);this.cc(120,0);
+    }
+    this.active.clear();
+  }
+}
+class InstrumentAudio {
+  constructor(){this.context=null;this.bus=null;this.voices=new Set();}
+  async ready(){
+    if(!this.context){
+      this.context=new AudioContext();
+      const ctx=this.context;
+      this.noise=ctx.createBuffer(1,ctx.sampleRate/2,ctx.sampleRate);
+      const a=this.noise.getChannelData(0);
+      for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1;
+      this.limiter=ctx.createDynamicsCompressor();
+      this.limiter.threshold.value=-16;this.limiter.ratio.value=10;
+      this.limiter.connect(ctx.destination);
+    }
+    await this.context.resume();
+  }
+  start(){
+    this.bus=this.context.createGain();
+    this.bus.gain.value=.55;this.bus.connect(this.limiter);
+  }
+  stop(){
+    if(!this.bus)return;
+    const bus=this.bus,t=this.context.currentTime;
+    bus.gain.cancelScheduledValues(t);bus.gain.setTargetAtTime(0,t,.004);
+    for(const source of this.voices){try{source.stop(t+.02);}catch{}}
+    this.voices.clear();this.bus=null;
+    setTimeout(()=>bus.disconnect(),50);
+  }
+  play(event,t){
+    const {voice,note,vel,len,tone}=event,c=this.context;
+    const freq=440*2**((note-69)/12);
+    const env=c.createGain(),filter=c.createBiquadFilter();
+    filter.connect(env);env.connect(this.bus);
+    const burst=voice==='hat'||voice==='clap';
+    const source=burst?c.createBufferSource():c.createOscillator();
+    const span=voice==='kick'?.25:voice==='clap'?.14:Math.min(len,.8);
+    const peak=vel*({kick:.55,clap:.24,hat:.15,bass:.30,glass:.21,moss:.18,wire:.23}[voice]??.2);
+    if(burst){
+      source.buffer=this.noise;filter.type=voice==='hat'?'highpass':'bandpass';filter.frequency.value=voice==='hat'?7500:1650;
+    }else{
+      source.type=({kick:'sine',bass:'sawtooth',glass:'sine',moss:'triangle',wire:'square'})[voice];
+      source.frequency.value=freq;
+      if(voice==='kick'){
+        source.frequency.setValueAtTime(140,t);source.frequency.exponentialRampToValueAtTime(42,t+.12);
+      }
+      filter.frequency.value=voice==='bass'?580:voice==='wire'?1350:voice==='moss'?1100:13000;
+      if(tone!==undefined && (voice==='glass'||voice==='moss')){
+        source.type=voice==='glass'?(tone>.64?'triangle':'sine'):(tone>.71?'sine':'triangle');
+        filter.frequency.value=480+tone*5200;
+      }
+      if(voice==='bass'||voice==='wire'){
+        filter.frequency.setValueAtTime(450+vel*1250+(tone??0)*800,t);
+        filter.frequency.exponentialRampToValueAtTime(300,t+span);
+      }
+    }
+    env.gain.setValueAtTime(.0001,t);
+    env.gain.exponentialRampToValueAtTime(Math.max(.001,peak),t+(voice==='moss'?.09:.006));
+    if(voice==='clap'){
+      env.gain.setValueAtTime(peak*.25,t+.016);
+      env.gain.linearRampToValueAtTime(peak*.82,t+.022);
+      env.gain.setValueAtTime(peak*.30,t+.032);
+      env.gain.linearRampToValueAtTime(peak*.70,t+.038);
+    }
+    env.gain.exponentialRampToValueAtTime(.0001,t+span);
+    source.connect(filter);this.voices.add(source);
+    source.onended=()=>{this.voices.delete(source);source.disconnect();filter.disconnect();env.disconnect();};
+    source.start(t);source.stop(t+span+.008);
+  }
+}
+
+const HABITAT_POSITIONS = [[264,105],[570,113],[571,324],[273,320]];
+const HABITAT_COLORS = ['#f4a58c','#93d1b1','#bbadff','#83c9e0'];
+const HABITAT_FORMS = [
+  'M0-40Q12-20 34-22Q27-3 42 12Q18 12 14 36Q-4 28-26 35Q-22 16-41 6Q-25-9-28-31Q-9-24 0-40Z',
+  'M0-33C27-46 42-12 34 9S11 44-11 34-45 21-35-2-29-21 0-33Z',
+  'M0-37C9-42 16-23 20-17S40-10 38 0 22 15 18 20 9 41 0 38-14 22-20 18-40 10-39 0-25-14-20-19-7-36 0-37Z',
+  'M0-39C17-38 23-23 32-15S39 11 28 22 13 38-1 36-28 36-34 18-39-6-27-26-9-38 0-39Z'
+];
+
+function habitatPage(){
+  const bodies=HABITAT_POSITIONS.map(([x,y],i)=>
+    '<g class="life-node" id="life-node-'+i+'" transform="translate('+x+' '+y+')" style="--organism:'+HABITAT_COLORS[i]+'">'+
+    '<circle class="life-orbit" r="49"/><g class="life-body"><path d="'+HABITAT_FORMS[i]+'"/>'+
+    '<ellipse rx="12" ry="18" transform="rotate(27)"/><circle r="4" cx="4" cy="-6"/></g></g>').join('');
+  const census=LIFE_ROLES.map((role,i)=>
+    '<div class="life-card" style="--organism:'+HABITAT_COLORS[i]+'"><span>'+role+'</span><small id="life-status-'+i+'">—</small></div>').join('');
+  return '<div class="shell ecosystem life-shell"><header><a class="back" href="#">← Playground</a><span class="life-observer">'+rabbit('ecosystem')+' Krazy Wabbit</span></header>'+
+    '<main class="life-main"><div class="life-heading"><div><p>The Circle of Life</p><h1>ECOSYSTEM</h1></div><div class="life-actions"><button id="play">BIG BANG</button><button id="father-time" disabled>Father Time</button></div></div>'+
+    '<div class="life-world" id="life-world" data-phase="unborn"><div class="life-readout"><strong id="mode">UNBORN</strong><span id="relation">Smack that big bang to give life.</span></div>'+
+    '<svg class="life-map" viewBox="0 0 840 424" role="img" aria-label="Habitat with four organism positions"><defs><pattern id="life-stars" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#c6a8fc" opacity=".23"/></pattern></defs>'+
+    '<rect width="840" height="424" fill="url(#life-stars)"/><g class="life-rings"><ellipse cx="420" cy="215" rx="330" ry="156"/><ellipse cx="420" cy="215" rx="268" ry="111"/><ellipse cx="420" cy="215" rx="201" ry="62"/><path d="M70 215H770M420 42V385"/></g>'+
+    '<path id="life-link" class="life-link" visibility="hidden"/>'+bodies+'</svg><div class="life-census">'+census+'</div></div>'+
+    '<p class="life-message" id="status" role="status"></p></main></div>';
+}
+
+function drawHabitat(view){
+  const world=find('life-world');
+  if(!world)return;
+  world.dataset.phase=view?view.mode==='Father Time'?'ending':'living':'unborn';
+  find('mode').textContent=view?.mode??'UNBORN';
+  find('relation').textContent=view?.relation?.text??(view?(view.mode==='Father Time'?'The habitat is falling quiet.':''):'Smack that big bang to give life.');
+  for(let i=0;i<4;i++){
+    const c=view?.creatures[i], node=find('life-node-'+i);
+    node.dataset.state=c?.state??'empty';
+    node.style.setProperty('--growth',c?.sounding?1.1:.75+(c?.energy??0)*.3);
+    node.style.setProperty('--health',c?Math.max(.04,c.energy):0);
+    find('life-status-'+i).textContent=c?c.state+' · Gen '+c.generation:view?'Vacant':'—';
+  }
+  const link=find('life-link'), relation=view?.relation;
+  if(!relation||relation.from===relation.to){
+    link.setAttribute('visibility','hidden');
+    return;
+  }
+  const [x,y]=HABITAT_POSITIONS[relation.from], [dx,dy]=HABITAT_POSITIONS[relation.to];
+  link.setAttribute('d','M'+x+' '+y+' Q420 215 '+dx+' '+dy);
+  link.dataset.type=relation.type;
+  link.setAttribute('visibility','visible');
+}
+
+const app=document.querySelector('#app');
+const rabbits={
+  mutiny:'M3 19 4 12 5 3 8 2 10 11 13 10 17 2 20 4 16 13 21 17 18 21 8 22Z',
+  parasite:'M2 17 6 11 5 2 8 1 11 10 14 10 17 1 20 3 17 12 22 15 21 19 15 22 8 21Z',
+  ecosystem:'M3 16Q3 12 7 11Q4 4 7 2Q10 0 11 11H14Q14 1 18 2Q21 3 17 12Q23 14 21 18Q19 23 12 22Q5 22 3 16Z'
+};
+function rabbit(k='mutiny'){
+  return '<svg class="rabbit" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="'+rabbits[k]+'"/><path fill="none" stroke="var(--rabbit-eye,#151611)" stroke-width="1.6" d="m7 15 3 2m4 0 3-2"/></svg>';
+}
+function art(k){
+  const g={
+    mutiny:Array.from({length:11},(_,i)=>'<path d="M'+(i*32-55)+' 140l69-140h24l-67 140z" opacity="'+(.26+i*.06)+'"/>').join('')+'<path fill="var(--panel)" d="M27 77h83l-15 19h45l-75 39 16-28H30z"/>',
+    parasite:Array.from({length:7},(_,i)=>'<path fill="none" stroke="currentColor" stroke-width="1.5" d="M0 '+(25+i*15)+'h'+(32+i*11)+'l29 -21h'+(27+i*9)+'l24 19H320"/>').join('')+'<circle cx="175" cy="66" r="17" fill="var(--panel)" stroke="currentColor" stroke-width="3"/><circle cx="175" cy="66" r="6"/>',
+    ecosystem:Array.from({length:7},(_,i)=>'<ellipse fill="none" stroke="currentColor" opacity="'+(.35+i*.09)+'" cx="160" cy="70" rx="'+(35+i*19)+'" ry="'+(13+i*8)+'" transform="rotate('+(i*21)+' 160 70)"/>').join('')+'<circle cx="160" cy="70" r="23"/><circle cx="72" cy="51" r="9"/><circle cx="226" cy="90" r="12"/>'
+  }[k];
+  return '<svg class="card-art" viewBox="0 0 320 140" preserveAspectRatio="xMidYMid slice" fill="currentColor" aria-hidden="true">'+g+'</svg>';
+}
+const info={
+  mutiny:{name:'MUTINY',line:'Autonomous musical rebellion',tempo:132,knobs:[['chaos','CRAZY',.42,'Push the machine toward fills and breakdowns'],['stability','Stability',.59,'Bring the original motif back and lengthen the bass'],['aggression','Aggression',.54,'Add percussion and hit harder'],['mutation','Mutation',.4,'Rewrite parts of the motif'],['rebirth','Rebirth',.54,'Shift the key and seed a new motif during recovery']]},
+  parasite:{name:'PARASITE',line:'Autonomous MIDI disruption',tempo:124,knobs:[['chaos','INFECT',.4,'Splice, displace, and burst through the recurring phrase'],['density','Density',.6,'Let more of the phrase through'],['gate','Gate',.3,'Set how long notes ring'],['swing','Swing',.35,'Delay offbeats']]},
+  ecosystem:{name:'ECOSYSTEM',line:'The Circle of Life'}
+};
+const audio=new InstrumentAudio(),midi=new Midi();
+let current, gen, params, timer, next, step, access, run=0, playing=false, drawing=[];
+let drawTimer, endingAt=null;
+const find=id=>document.getElementById(id);
+const setStatus=text=>{if(find('status'))find('status').textContent=text;};
+function stop(){
+  run++;playing=false;clearInterval(timer);clearTimeout(drawTimer);drawing=[];
+  audio.stop();midi.route(null,0);
+  endingAt=null;
+  if(find('play'))find('play').disabled=false;
+  if(find('stop'))find('stop').disabled=true;
+  if(current==='ecosystem'){
+    gen=null;
+    if(find('father-time'))find('father-time').disabled=true;
+    drawHabitat(null);
+  }
+}
+function route(){
+  if(current!=='parasite')return;
+  const port=access?.outputs.get(find('destination').value);
+  midi.route(playing&&port?.state==='connected'?port:null,Number(find('channel').value)-1);
+}
+function updatePorts(){
+  if(current!=='parasite')return;
+  const dest=find('destination'), selected=dest.value;
+  const wasExternal=selected!=='';
+  dest.replaceChildren(new Option('Internal audio',''));
+  for(const port of access.outputs.values())if(port.state==='connected')dest.add(new Option(port.name||'MIDI output',port.id));
+  if([...dest.options].some(o=>o.value===selected))dest.value=selected;
+  if(wasExternal&&!dest.value)setStatus('MIDI disconnected. Internal audio selected.');
+  route();
+}
+function draw(view){
+  if(current==='ecosystem'){drawHabitat(view);return;}
+  find('mode').textContent=view.mode;
+  find('relation').textContent=view.relation;
+}
+function fatherTime(){
+  if(!playing||endingAt!==null||find('father-time').disabled)return;
+  gen.end(step);
+  find('father-time').disabled=true;
+  setStatus('The ecosystem is reaching its end.');
+}
+function paint(){
+  if(endingAt!==null&&audio.context.currentTime>=endingAt){
+    stop();setStatus('The habitat is quiet.');return;
+  }
+  while(drawing.length&&drawing[0].t<=audio.context.currentTime+.012)draw(drawing.shift().view);
+  if(playing)drawTimer=setTimeout(paint,24);
+}
+function tick(){
+  const c=audio.context, interval=60/(gen.tempo??info[current].tempo)/4;
+  if(endingAt!==null)return;
+  if(next<c.currentTime)next=c.currentTime+.025;
+  midi.prune(performance.now());
+  while(next<c.currentTime+.10){
+    if(current==='ecosystem'&&gen.done(step)){
+      endingAt=next;
+      return;
+    }
+    const events=gen.step(step,params);
+    for(const event of events){
+      const t=next+event.offset;
+      if(midi.port){
+        const at=performance.now()+Math.max(0,t-c.currentTime)*1000;
+        midi.note(event.note,event.vel,at,event.len*1000);
+      }else audio.play(event,t);
+    }
+    if(midi.port&&step%4===0&&find('cc-opt').checked){
+      const cc=find('cc-number').valueAsNumber;
+      if(Number.isInteger(cc)&&cc>=1&&cc<=119&&![6,32,38,64,65,66,67,68,69,96,97,98,99,100,101].includes(cc)){
+        const value=Math.round(20+params.chaos*(52+38*Math.sin(step*Math.PI/16)));
+        midi.cc(cc,value,performance.now()+Math.max(0,next-c.currentTime)*1000);
+      }
+    }
+    drawing.push({t:next,view:gen.view(step)});
+    step++;next+=interval;
+  }
+}
+async function start(){
+  if(playing)return;
+  const request=++run;
+  find('play').disabled=true;
+  if(find('stop'))find('stop').disabled=false;
+  try{
+    await audio.ready();
+    if(request!==run)return;
+    if(audio.context.state!=='running')throw new Error('Audio is suspended');
+    audio.start();playing=true;gen=current==='ecosystem'?newEcosystem():engine(current);step=0;next=audio.context.currentTime+.045;
+    route();
+    if(current==='ecosystem'){
+      find('father-time').disabled=false;
+      setStatus('');
+    }else{
+      find('stop').disabled=false;
+      setStatus('Playing');
+    }
+    tick();timer=setInterval(tick,20);paint();
+  }catch(error){
+    if(request!==run)return;
+    stop();setStatus('Audio could not start. Press Play to try again.');
+    console.error(error);
+  }
+}
+function instrument(k){
+  stop();current=k;
+  if(k==='ecosystem'){
+    app.innerHTML=habitatPage();
+    drawHabitat(null);
+    find('play').onclick=start;
+    find('father-time').onclick=fatherTime;
+    return;
+  }
+  const data=info[k];
+  params=Object.fromEntries(data.knobs.map(([key,,v])=>[key,v]));
+  const controls=data.knobs.map(([key,label,v,hint])=>
+    '<label class="control '+(key==='chaos'?'chaos':'')+'" title="'+hint+'"><span>'+
+    (key==='chaos'?rabbit(k):'')+label+'</span><output>'+Math.round(v*100)+'</output>'+
+    '<input type="range" aria-label="'+label+'" data-knob="'+key+'" min="0" max="100" value="'+Math.round(v*100)+'"></label>').join('');
+  app.innerHTML='<div class="shell '+k+'"><header><a class="back" href="#">← Playground</a><span>'+data.tempo+' BPM</span></header><main class="instrument"><h1>'+data.name+'</h1><p class="intro">'+data.line+'</p>'+
+    '<div class="surface"><div class="screen">'+art(k)+'<div><b id="mode">Standby</b><small id="relation">Press Play</small></div></div><div class="controlbox">'+controls+'</div></div>'+
+    '<div class="actions"><button class="play" id="play">▶ Play</button><button id="stop" disabled>■ Stop</button><button id="fresh">Fresh start</button>'+
+    (k==='parasite'?'<button id="panic">Panic</button>':'')+'</div>'+
+    (k==='parasite'?'<div class="midi"><button id="connect">Enable MIDI</button><label>Output <select id="destination"><option value="">Internal audio</option></select></label><label>Channel <select id="channel">'+
+      Array.from({length:16},(_,i)=>'<option>'+(i+1)+'</option>').join('')+'</select></label><label><input type="checkbox" id="cc-opt"> Send CC</label><label>CC <input id="cc-number" type="number" min="1" max="119" value="74" step="1"></label></div>':'')+
+    '<p class="status" id="status" role="status"></p></main><footer><span>Krazy Wabbit</span><span>Play more. Code less.</span></footer></div>';
+  for(const input of app.querySelectorAll('[data-knob]')){
+    input.oninput=()=>{params[input.dataset.knob]=input.valueAsNumber/100;input.previousElementSibling.value=input.value;};
+  }
+  find('play').onclick=start;
+  find('stop').onclick=()=>{stop();setStatus('Stopped');};
+  find('fresh').onclick=()=>{stop();start();};
+  if(k==='parasite'){
+    find('destination').onchange=()=>{if(playing){audio.stop();audio.start();}route();};
+    find('channel').onchange=route;
+    find('panic').onclick=()=>{stop();setStatus('Panic sent to the active route. Transport stopped.');};
+    find('connect').onclick=async()=>{
+      if(!navigator.requestMIDIAccess){setStatus('Web MIDI unavailable here. Internal audio is ready.');return;}
+      try{
+        access=await navigator.requestMIDIAccess({sysex:false});
+        access.onstatechange=updatePorts;
+        updatePorts();
+        if(current==='parasite')setStatus(access.outputs.size?'MIDI enabled. Select an output.':'MIDI enabled. No outputs detected.');
+      }catch{if(current==='parasite')setStatus('MIDI permission unavailable. Internal audio is ready.');}
+    };
+    if(access)updatePorts();
+  }
+}
+function home(){
+  stop();current=null;
+  app.innerHTML='<div class="shell"><header><span class="brand">'+rabbit()+' Krazy Wabbit</span><span>Experimental instruments</span></header>'+
+    '<main><div class="hero"><h1>Krazy Wabbit<br><span>Playground</span></h1><p>Three instruments that write their own music. You steer.</p></div><div class="cards">'+
+    Object.entries(info).map(([k,data])=>'<a class="card '+k+'" href="#'+k+'" style="text-decoration:none">'+art(k)+'<span class="line"><strong>'+data.name+'</strong><span aria-hidden="true">↗</span></span><small>'+data.line+'</small></a>').join('')+
+    '</div></main><footer><span>Play more. Code less.</span><span>Audio generated locally</span></footer></div>';
+}
+function navigate(){
+  const key=location.hash.slice(1);
+  if(Object.hasOwn(info,key))instrument(key);else home();
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',navigate);
+window.addEventListener('pagehide',stop);
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&current!=='ecosystem'&&find('play')?.disabled){stop();setStatus('Stopped when the page went into the background.');}});
+navigate();
+</script>
+</body>
+</html>
